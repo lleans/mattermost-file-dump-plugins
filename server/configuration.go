@@ -5,6 +5,11 @@ import (
 )
 
 type configuration struct {
+	MinIOEndpoint  string
+	MinIOAccessKey string
+	MinIOSecretKey string
+	MinIOBucket    string
+	MinIOUseSSL    bool
 }
 
 func (c *configuration) Clone() *configuration {

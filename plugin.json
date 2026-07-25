@@ -21,6 +21,43 @@
     "settings_schema": {
         "header": "",
         "footer": "",
-        "settings": []
+        "settings": [
+            {
+                "key": "MinIOEndpoint",
+                "display_name": "MinIO Endpoint",
+                "type": "text",
+                "help_text": "The public, browser-reachable host:port for MinIO through APISIX, e.g. localhost:9080. Do not use MinIO's internal address.",
+                "default": ""
+            },
+            {
+                "key": "MinIOUseSSL",
+                "display_name": "Use HTTPS",
+                "type": "bool",
+                "help_text": "Whether the public MinIO endpoint is served over HTTPS.",
+                "default": false
+            },
+            {
+                "key": "MinIOAccessKey",
+                "display_name": "MinIO Access Key",
+                "type": "text",
+                "help_text": "Access key used to sign presigned upload URLs.",
+                "default": ""
+            },
+            {
+                "key": "MinIOSecretKey",
+                "display_name": "MinIO Secret Key",
+                "type": "text",
+                "help_text": "Secret key used to sign presigned upload URLs.",
+                "default": "",
+                "secret": true
+            },
+            {
+                "key": "MinIOBucket",
+                "display_name": "MinIO Bucket",
+                "type": "text",
+                "help_text": "Bucket that receives uploaded files. Must already exist with public-read access (the plugin sets the read policy on activation but does not create the bucket).",
+                "default": "uploads"
+            }
+        ]
     }
 }
