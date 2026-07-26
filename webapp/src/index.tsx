@@ -3,11 +3,13 @@
 
 import manifest from 'manifest';
 import type {Store} from 'redux';
+
 import type {GlobalState} from '@mattermost/types/store';
+
 import type {PluginRegistry} from 'types/mattermost-webapp';
 
-import UploadPanel from './components/upload_panel';
 import UploadIcon from './components/upload_icon';
+import UploadPanel from './components/upload_panel';
 
 export default class Plugin {
     public async initialize(registry: PluginRegistry, store: Store<GlobalState>) {
