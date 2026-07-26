@@ -3,15 +3,25 @@
 
 import manifest from 'manifest';
 import type {Store} from 'redux';
-
 import type {GlobalState} from '@mattermost/types/store';
-
 import type {PluginRegistry} from 'types/mattermost-webapp';
 
+import UploadPanel from './components/upload_panel';
+import UploadIcon from './components/upload_icon';
+
 export default class Plugin {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
     public async initialize(registry: PluginRegistry, store: Store<GlobalState>) {
-        // @see https://developers.mattermost.com/extend/plugins/webapp/reference/
+        const {toggleRHSPlugin} = registry.registerRightHandSidebarComponent(
+            UploadPanel,
+            'Picture Dump',
+        );
+
+        registry.registerChannelHeaderButtonAction(
+            UploadIcon,
+            () => store.dispatch(toggleRHSPlugin),
+            'Picture Dump',
+            'Upload files to Picture Dump',
+        );
     }
 }
 
