@@ -1,0 +1,14 @@
+routes:
+  - uri: /*
+    upstream:
+      nodes:
+        "minio:9000": 1
+      type: roundrobin
+    plugins:
+      cors:
+        allow_origins: "http://localhost:8065"
+        allow_methods: "GET,PUT,POST,OPTIONS"
+        allow_headers: "*"
+        expose_headers: "ETag"
+        max_age: 5
+#END
