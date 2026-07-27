@@ -17,6 +17,26 @@ interface PresignResultItem {
 
 const API_BASE = '/plugins/com.acumenstrategy.picture-dump/api/v1';
 
+function getCSRFFromCookie(): string {
+    if (typeof document === 'undefined') {
+        return '';
+    }
+    for (const cookie of document.cookie.split(';')) {
+        const trimmed = cookie.trim();
+        if (trimmed.startsWith('MMCSRF=')) {
+            return trimmed.substring('MMCSRF='.length);
+        }
+    }
+    return '';
+}
+
+function jsonHeaders(): Record<string, string> {
+    return {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': getCSRFFromCookie(),
+    };
+}
+
 export async function requestPresignedUrls(items: UploadItem[]): Promise<PresignResultItem[]> {
     const body: PresignRequestItem[] = items.map((item) => ({
         id: item.id,
@@ -27,7 +47,7 @@ export async function requestPresignedUrls(items: UploadItem[]): Promise<Presign
 
     const response = await fetch(`${API_BASE}/uploads/presign`, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: jsonHeaders(),
         body: JSON.stringify(body),
     });
 
@@ -62,7 +82,7 @@ export function uploadFile(file: File, uploadUrl: string, onProgress: (percent: 
 export async function confirmUpload(objectKey: string, filename: string, size: number): Promise<void> {
     const response = await fetch(`${API_BASE}/uploads/complete`, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: jsonHeaders(),
         body: JSON.stringify({objectKey, filename, size}),
     });
 
