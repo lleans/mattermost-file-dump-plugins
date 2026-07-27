@@ -1,0 +1,41 @@
+.picture-dump-dropzone {
+    border: 2px dashed var(--center-channel-color-32, rgba(63, 67, 80, 0.32));
+    border-radius: 4px;
+    padding: 24px;
+    text-align: center;
+    color: var(--center-channel-color-64, rgba(63, 67, 80, 0.64));
+    margin-bottom: 12px;
+
+    &--active {
+        border-color: var(--button-bg, #1c58d9);
+        background: var(--button-bg-08, rgba(28, 88, 217, 0.08));
+    }
+}
+
+.picture-dump-file-row {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--center-channel-color-08, rgba(63, 67, 80, 0.08));
+
+    &__name {
+        font-weight: 600;
+        color: var(--center-channel-color);
+    }
+
+    &__progress {
+        height: 4px;
+        background: var(--center-channel-color-08, rgba(63, 67, 80, 0.08));
+        border-radius: 2px;
+        margin-top: 4px;
+    }
+
+    &__progress-bar {
+        height: 100%;
+        background: var(--button-bg, #1c58d9);
+        border-radius: 2px;
+        transition: width 0.2s ease;
+    }
+
+    &__error {
+        color: var(--error-text, #d24b4e);
+    }
+}
