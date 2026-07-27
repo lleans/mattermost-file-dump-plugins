@@ -31,7 +31,14 @@ export default function FileRow({item, onRetry}: Props) {
             )}
             {item.status === 'done' && item.publicUrl && (
                 <div className='picture-dump-file-row__done'>
-                    <a href={item.publicUrl}>{item.publicUrl}</a>
+                    {/* eslint-disable-next-line @mattermost/use-external-link */}
+                    <a
+                        href={item.publicUrl}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                    >
+                        {item.publicUrl}
+                    </a>
                     <button onClick={handleCopy}>{copied ? 'Copied!' : 'Copy link'}</button>
                 </div>
             )}
