@@ -47,7 +47,15 @@ func (p *Plugin) OnActivate() error {
 		return err
 	}
 
-	if err := minioClient.EnsurePublicReadBucket(context.Background()); err != nil {
+	adminEndpoint := conf.MinIOInternalEndpoint
+	if adminEndpoint == "" {
+		adminEndpoint = conf.MinIOEndpoint
+	}
+
+	adminClient, err := upload.NewAdminClient(adminEndpoint, conf.MinIOAccessKey, conf.MinIOSecretKey, conf.MinIOUseSSL)
+	if err != nil {
+		p.API.LogWarn("failed to create minio admin client", "error", err.Error())
+	} else if err := upload.EnsurePublicReadBucket(context.Background(), adminClient, conf.MinIOBucket); err != nil {
 		p.API.LogWarn("failed to set public-read bucket policy", "error", err.Error())
 	}
 

@@ -30,6 +30,13 @@
                 "default": ""
             },
             {
+                "key": "MinIOInternalEndpoint",
+                "display_name": "MinIO Internal Endpoint (optional)",
+                "type": "text",
+                "help_text": "Internal host:port for MinIO, reachable from the plugin backend, used only to set the bucket's public-read policy on activation (e.g. minio:9000 in a Docker Compose setup). Leave blank to use MinIO Endpoint for this as well. Never used for presigning — presigned URLs always use MinIO Endpoint.",
+                "default": ""
+            },
+            {
                 "key": "MinIOUseSSL",
                 "display_name": "Use HTTPS",
                 "type": "bool",

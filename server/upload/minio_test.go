@@ -49,6 +49,35 @@ func TestPresignPutSignsForThePublicEndpoint(t *testing.T) {
 	}
 }
 
+func TestNewAdminClientBuildsWithoutError(t *testing.T) {
+	mc, err := NewAdminClient("minio:9000", "test-access-key", "test-secret-key", false)
+	if err != nil {
+		t.Fatalf("NewAdminClient failed: %v", err)
+	}
+	if mc == nil {
+		t.Fatal("expected a non-nil *minio.Client")
+	}
+}
+
+func TestEnsurePublicReadBucketDoesNotRequireAPresigningClient(t *testing.T) {
+	// EnsurePublicReadBucket must be usable with a client built solely via
+	// NewAdminClient (i.e. not derived from/coupled to a presigning Client
+	// bound to the public endpoint). SetBucketPolicy itself needs a live
+	// MinIO server to succeed, so this only exercises that the call is
+	// reachable/well-typed against an admin client and fails with a network
+	// error (not a compile/type error, and not a nil-pointer panic) when no
+	// server is listening.
+	mc, err := NewAdminClient("127.0.0.1:1", "test-access-key", "test-secret-key", false)
+	if err != nil {
+		t.Fatalf("NewAdminClient failed: %v", err)
+	}
+
+	err = EnsurePublicReadBucket(context.Background(), mc, "uploads")
+	if err == nil {
+		t.Fatal("expected an error dialing a port with nothing listening, got nil")
+	}
+}
+
 func TestPresignPutGeneratesUniqueObjectKeys(t *testing.T) {
 	c, err := NewClient("storage.example.com", "test-access-key", "test-secret-key", "uploads", true, "https://storage.example.com")
 	if err != nil {
