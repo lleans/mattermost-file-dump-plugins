@@ -1,0 +1,70 @@
+{
+    "id": "com.acumenstrategy.picture-dump",
+    "name": "Picture Dump",
+    "description": "Drag-and-drop file uploads with direct-to-MinIO presigned links.",
+    "homepage_url": "",
+    "support_url": "",
+    "icon_path": "assets/starter-template-icon.svg",
+    "min_server_version": "9.0.0",
+    "server": {
+        "executables": {
+            "linux-amd64": "server/dist/plugin-linux-amd64",
+            "linux-arm64": "server/dist/plugin-linux-arm64",
+            "darwin-amd64": "server/dist/plugin-darwin-amd64",
+            "darwin-arm64": "server/dist/plugin-darwin-arm64",
+            "windows-amd64": "server/dist/plugin-windows-amd64.exe"
+        }
+    },
+    "webapp": {
+        "bundle_path": "webapp/dist/main.js"
+    },
+    "settings_schema": {
+        "header": "",
+        "footer": "",
+        "settings": [
+            {
+                "key": "MinIOEndpoint",
+                "display_name": "MinIO Endpoint",
+                "type": "text",
+                "help_text": "The public, browser-reachable host:port for MinIO through APISIX, e.g. localhost:9080. Do not use MinIO's internal address.",
+                "default": ""
+            },
+            {
+                "key": "MinIOInternalEndpoint",
+                "display_name": "MinIO Internal Endpoint (optional)",
+                "type": "text",
+                "help_text": "Internal host:port for MinIO, reachable from the plugin backend, used only to set the bucket's public-read policy on activation (e.g. minio:9000 in a Docker Compose setup). Leave blank to use MinIO Endpoint for this as well. Never used for presigning — presigned URLs always use MinIO Endpoint.",
+                "default": ""
+            },
+            {
+                "key": "MinIOUseSSL",
+                "display_name": "Use HTTPS",
+                "type": "bool",
+                "help_text": "Whether the public MinIO endpoint is served over HTTPS.",
+                "default": false
+            },
+            {
+                "key": "MinIOAccessKey",
+                "display_name": "MinIO Access Key",
+                "type": "text",
+                "help_text": "Access key used to sign presigned upload URLs.",
+                "default": ""
+            },
+            {
+                "key": "MinIOSecretKey",
+                "display_name": "MinIO Secret Key",
+                "type": "text",
+                "help_text": "Secret key used to sign presigned upload URLs.",
+                "default": "",
+                "secret": true
+            },
+            {
+                "key": "MinIOBucket",
+                "display_name": "MinIO Bucket",
+                "type": "text",
+                "help_text": "Bucket that receives uploaded files. Must already exist with public-read access (the plugin sets the read policy on activation but does not create the bucket).",
+                "default": "uploads"
+            }
+        ]
+    }
+}

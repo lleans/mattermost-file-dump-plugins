@@ -1,0 +1,9 @@
+deployment:
+  role: data_plane
+  role_data_plane:
+    config_provider: yaml
+apisix:
+  enable_admin: false
+nginx_config:
+  http:
+    client_max_body_size: 20m
