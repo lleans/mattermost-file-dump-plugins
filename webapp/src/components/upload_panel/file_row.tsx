@@ -21,30 +21,30 @@ export default function FileRow({item, onRetry}: Props) {
     const isImage = item.file.type.startsWith('image/');
 
     return (
-        <div className='picture-dump-file-row'>
-            <div className='picture-dump-file-row__header'>
-                <i className={`icon ${isImage ? 'icon-file-image-outline' : 'icon-file-outline'} picture-dump-file-row__file-icon`}/>
+        <div className='file-dump-file-row'>
+            <div className='file-dump-file-row__header'>
+                <i className={`icon ${isImage ? 'icon-file-image-outline' : 'icon-file-outline'} file-dump-file-row__file-icon`}/>
                 <div
-                    className='picture-dump-file-row__name'
+                    className='file-dump-file-row__name'
                     title={item.file.name}
                 >
                     {item.file.name}
                 </div>
             </div>
             {item.status === 'uploading' && (
-                <div className='picture-dump-file-row__progress'>
+                <div className='file-dump-file-row__progress'>
                     <div
-                        className='picture-dump-file-row__progress-bar'
+                        className='file-dump-file-row__progress-bar'
                         style={{width: `${item.progress}%`}}
                     />
                 </div>
             )}
             {item.status === 'done' && item.publicUrl && (
-                <div className='picture-dump-file-row__done'>
-                    <i className='icon icon-link-variant picture-dump-file-row__link-icon'/>
+                <div className='file-dump-file-row__done'>
+                    <i className='icon icon-link-variant file-dump-file-row__link-icon'/>
                     {/* eslint-disable-next-line @mattermost/use-external-link */}
                     <a
-                        className='picture-dump-file-row__link'
+                        className='file-dump-file-row__link'
                         href={item.publicUrl}
                         target='_blank'
                         rel='noopener noreferrer'
@@ -53,7 +53,7 @@ export default function FileRow({item, onRetry}: Props) {
                         {item.publicUrl}
                     </a>
                     <button
-                        className='picture-dump-file-row__copy-btn'
+                        className='file-dump-file-row__copy-btn'
                         onClick={handleCopy}
                         aria-label={copied ? 'Copied' : 'Copy link'}
                         title={copied ? 'Copied' : 'Copy link'}
@@ -64,11 +64,11 @@ export default function FileRow({item, onRetry}: Props) {
                 </div>
             )}
             {item.status === 'error' && (
-                <div className='picture-dump-file-row__error'>
-                    <i className='icon icon-alert-outline picture-dump-file-row__error-icon'/>
-                    <span className='picture-dump-file-row__error-text'>{item.error}</span>
+                <div className='file-dump-file-row__error'>
+                    <i className='icon icon-alert-outline file-dump-file-row__error-icon'/>
+                    <span className='file-dump-file-row__error-text'>{item.error}</span>
                     <button
-                        className='picture-dump-file-row__retry-btn'
+                        className='file-dump-file-row__retry-btn'
                         onClick={() => onRetry(item.id)}
                         aria-label='Retry'
                         title='Retry'

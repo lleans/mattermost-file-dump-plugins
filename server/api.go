@@ -8,7 +8,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/mattermost/mattermost/server/public/plugin"
 
-	"github.com/acumenstrategy/picture-dump-plugin/server/upload"
+	"github.com/lleans/file-dump-plugin/server/upload"
 )
 
 func (p *Plugin) initRouter() *mux.Router {

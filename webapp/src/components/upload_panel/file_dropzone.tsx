@@ -46,7 +46,7 @@ export default function FileDropzone({onDrop}: Props) {
 
     return (
         <div
-            className={'picture-dump-dropzone' + (isDragging ? ' picture-dump-dropzone--active' : '')}
+            className={'file-dump-dropzone' + (isDragging ? ' file-dump-dropzone--active' : '')}
             tabIndex={0}
             onDragOver={(e) => {
                 e.preventDefault();
@@ -56,17 +56,17 @@ export default function FileDropzone({onDrop}: Props) {
             onDrop={handleDrop}
             onPaste={handlePaste}
         >
-            <div className='picture-dump-dropzone__prompt'>
+            <div className='file-dump-dropzone__prompt'>
                 {'Drag and drop files here, paste an image, or '}
                 <button
                     type='button'
-                    className='picture-dump-dropzone__browse-btn'
+                    className='file-dump-dropzone__browse-btn'
                     onClick={handleBrowseClick}
                 >
                     {'browse'}
                 </button>
             </div>
-            <div className='picture-dump-dropzone__limits'>
+            <div className='file-dump-dropzone__limits'>
                 {'Up to '}
                 <strong>{`${MAX_BATCH_SIZE} files`}</strong>
                 {', '}
@@ -78,7 +78,7 @@ export default function FileDropzone({onDrop}: Props) {
                 type='file'
                 multiple={true}
                 accept={ALLOWED_EXTENSIONS.join(',')}
-                className='picture-dump-dropzone__input'
+                className='file-dump-dropzone__input'
                 aria-label='Browse files to upload'
                 onChange={handleFileInputChange}
             />

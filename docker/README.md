@@ -1,7 +1,7 @@
 # Local QA stack
 
 Brings up Mattermost, Postgres, MinIO, and APISIX (fronting MinIO) for manual
-end-to-end testing of the picture-dump plugin.
+end-to-end testing of the file-dump plugin.
 
 ## Start
 

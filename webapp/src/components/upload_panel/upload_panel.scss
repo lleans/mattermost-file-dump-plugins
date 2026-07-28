@@ -1,4 +1,4 @@
-.picture-dump-panel {
+.file-dump-panel {
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -22,7 +22,7 @@
     }
 }
 
-.picture-dump-empty-state {
+.file-dump-empty-state {
     padding: 12px 8px 24px;
     text-align: center;
 
@@ -48,7 +48,7 @@
     }
 }
 
-.picture-dump-dropzone {
+.file-dump-dropzone {
     padding: 24px;
     margin-bottom: 16px;
     color: var(--center-channel-color-64, rgba(63, 67, 80, 0.64));
@@ -86,7 +86,7 @@
     }
 }
 
-.picture-dump-panel__disclaimer {
+.file-dump-panel__disclaimer {
     display: flex;
     gap: 8px;
     align-items: flex-start;
@@ -105,7 +105,7 @@
     }
 }
 
-.picture-dump-file-row {
+.file-dump-file-row {
     padding: 14px 12px;
     border-bottom: 1px solid var(--center-channel-color-08, rgba(63, 67, 80, 0.08));
 

@@ -2,9 +2,9 @@ import React from 'react';
 
 export default function EmptyState() {
     return (
-        <div className='picture-dump-empty-state'>
+        <div className='file-dump-empty-state'>
             <svg
-                className='picture-dump-empty-state__illustration'
+                className='file-dump-empty-state__illustration'
                 viewBox='0 0 220 160'
                 aria-hidden='true'
             >
@@ -119,8 +119,8 @@ export default function EmptyState() {
                     strokeLinejoin='round'
                 />
             </svg>
-            <div className='picture-dump-empty-state__title'>{'Picture Dump'}</div>
-            <div className='picture-dump-empty-state__description'>
+            <div className='file-dump-empty-state__title'>{'File Dump'}</div>
+            <div className='file-dump-empty-state__description'>
                 {'Drag and drop images or files below to instantly generate a shareable link.'}
             </div>
         </div>

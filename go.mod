@@ -1,4 +1,4 @@
-module github.com/acumenstrategy/picture-dump-plugin
+module github.com/lleans/file-dump-plugin
 
 go 1.25.0
 

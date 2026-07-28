@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/acumenstrategy/picture-dump-plugin/server/upload"
+	"github.com/lleans/file-dump-plugin/server/upload"
 )
 
 type fakePresigner struct{}

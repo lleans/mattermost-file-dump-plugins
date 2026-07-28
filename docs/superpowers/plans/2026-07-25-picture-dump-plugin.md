@@ -1,4 +1,4 @@
-# Picture Dump Plugin Implementation Plan
+# File Dump Plugin Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -8,11 +8,11 @@
 
 **Tech Stack:** Go 1.25, gorilla/mux, minio-go/v7, google/uuid, Mattermost plugin SDK (`mattermost/server/public`); React 18 + TypeScript (Mattermost webapp plugin conventions), Jest + @testing-library/react; Docker Compose (Mattermost, Postgres, MinIO, APISIX standalone mode) for manual QA.
 
-Spec: `docs/superpowers/specs/2026-07-25-picture-dump-plugin-design.md`
+Spec: `docs/superpowers/specs/2026-07-25-file-dump-plugin-design.md`
 
 ## Global Constraints
 
-- Plugin ID: `com.acumenstrategy.picture-dump`. Go module: `github.com/acumenstrategy/picture-dump-plugin`.
+- Plugin ID: `com.lleans.file-dump`. Go module: `github.com/lleans/file-dump-plugin`.
 - Allowed file extensions (enforced identically on client and server): `.jpg`, `.jpeg`, `.png`, `.gif`, `.webp`, `.svg`, `.pdf`, `.docx`, `.xlsx`, `.pptx`, `.txt`, `.zip`.
 - Max file size: 10MB (`10 * 1024 * 1024` bytes) per file, server-side is the source of truth.
 - Max batch size: 10 files per drop/request, server-side is the source of truth.
@@ -96,8 +96,8 @@ Replace `plugin.json` with:
 
 ```json
 {
-    "id": "com.acumenstrategy.picture-dump",
-    "name": "Picture Dump",
+    "id": "com.lleans.file-dump",
+    "name": "File Dump",
     "description": "Drag-and-drop file uploads with direct-to-MinIO presigned links.",
     "homepage_url": "",
     "support_url": "",
@@ -126,8 +126,8 @@ Replace `plugin.json` with:
 Then rename the Go module (macOS `sed -i` requires the empty `''` backup-suffix argument):
 
 ```bash
-sed -i '' 's|module github.com/mattermost/mattermost-plugin-starter-template|module github.com/acumenstrategy/picture-dump-plugin|' go.mod
-sed -i '' 's|github.com/mattermost/mattermost-plugin-starter-template|github.com/acumenstrategy/picture-dump-plugin|g' server/*.go
+sed -i '' 's|module github.com/mattermost/mattermost-plugin-starter-template|module github.com/lleans/file-dump-plugin|' go.mod
+sed -i '' 's|github.com/mattermost/mattermost-plugin-starter-template|github.com/lleans/file-dump-plugin|g' server/*.go
 ```
 
 - [ ] **Step 3: Strip demo-only functionality not needed by this plugin**
@@ -815,7 +815,7 @@ git commit -m "Add KV-store-backed upload metadata recording"
 
 **Interfaces:**
 - Consumes: `upload.FileRequest`, `upload.ValidateFile`, `upload.ValidateBatch` (Task 2); `upload.Client.PresignPut`, `upload.PresignResult` (Task 3); `upload.Store.Record`, `upload.Metadata` (Task 4)
-- Produces: `POST /plugins/com.acumenstrategy.picture-dump/api/v1/uploads/presign` and `POST /plugins/com.acumenstrategy.picture-dump/api/v1/uploads/complete` — consumed by Task 8's `upload_client.ts`.
+- Produces: `POST /plugins/com.lleans.file-dump/api/v1/uploads/presign` and `POST /plugins/com.lleans.file-dump/api/v1/uploads/complete` — consumed by Task 8's `upload_client.ts`.
 
 - [ ] **Step 1: Replace `server/plugin.go`**
 
@@ -829,7 +829,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/mattermost/mattermost/server/public/plugin"
 
-	"github.com/acumenstrategy/picture-dump-plugin/server/upload"
+	"github.com/lleans/file-dump-plugin/server/upload"
 )
 
 // presigner and recorder are narrow interfaces over *upload.Client and
@@ -902,7 +902,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/mattermost/mattermost/server/public/plugin"
 
-	"github.com/acumenstrategy/picture-dump-plugin/server/upload"
+	"github.com/lleans/file-dump-plugin/server/upload"
 )
 
 func (p *Plugin) initRouter() *mux.Router {
@@ -1037,7 +1037,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/acumenstrategy/picture-dump-plugin/server/upload"
+	"github.com/lleans/file-dump-plugin/server/upload"
 )
 
 type fakePresigner struct{}
@@ -1195,8 +1195,8 @@ import React from 'react';
 
 export default function UploadPanel() {
     return (
-        <div className='picture-dump-panel'>
-            <div className='picture-dump-dropzone'>
+        <div className='file-dump-panel'>
+            <div className='file-dump-dropzone'>
                 {'Drag and drop files here (up to 10, 10MB each)'}
             </div>
         </div>
@@ -1240,14 +1240,14 @@ export default class Plugin {
     public async initialize(registry: PluginRegistry, store: Store<GlobalState>) {
         const {toggleRHSPlugin} = registry.registerRightHandSidebarComponent(
             UploadPanel,
-            'Picture Dump',
+            'File Dump',
         );
 
         registry.registerChannelHeaderButtonAction(
             UploadIcon,
             () => store.dispatch(toggleRHSPlugin),
-            'Picture Dump',
-            'Upload files to Picture Dump',
+            'File Dump',
+            'Upload files to File Dump',
         );
     }
 }
@@ -1439,7 +1439,7 @@ export default function FileDropzone({onDrop}: Props) {
 
     return (
         <div
-            className={'picture-dump-dropzone' + (isDragging ? ' picture-dump-dropzone--active' : '')}
+            className={'file-dump-dropzone' + (isDragging ? ' file-dump-dropzone--active' : '')}
             onDragOver={(e) => {
                 e.preventDefault();
                 setIsDragging(true);
@@ -1499,14 +1499,14 @@ export default function UploadPanel() {
     }, []);
 
     return (
-        <div className='picture-dump-panel'>
+        <div className='file-dump-panel'>
             <FileDropzone onDrop={onDrop}/>
-            {batchError && <div className='picture-dump-panel__batch-error'>{batchError}</div>}
-            <div className='picture-dump-panel__list'>
+            {batchError && <div className='file-dump-panel__batch-error'>{batchError}</div>}
+            <div className='file-dump-panel__list'>
                 {items.map((item) => (
-                    <div key={item.id} className='picture-dump-file-row'>
+                    <div key={item.id} className='file-dump-file-row'>
                         <span>{item.file.name}</span>
-                        {item.status === 'error' && <span className='picture-dump-file-row__error'>{item.error}</span>}
+                        {item.status === 'error' && <span className='file-dump-file-row__error'>{item.error}</span>}
                     </div>
                 ))}
             </div>
@@ -1536,7 +1536,7 @@ git commit -m "Add client-side validation and drag-drop zone with rejected-file 
 - Modify: `webapp/src/components/upload_panel/index.tsx`
 
 **Interfaces:**
-- Consumes: `POST /plugins/com.acumenstrategy.picture-dump/api/v1/uploads/presign` and `.../uploads/complete` (Task 5), `validateFile`/`validateBatch` (Task 7), `UploadItem` (Task 7)
+- Consumes: `POST /plugins/com.lleans.file-dump/api/v1/uploads/presign` and `.../uploads/complete` (Task 5), `validateFile`/`validateBatch` (Task 7), `UploadItem` (Task 7)
 - Produces: `useUploads()` hook returning `{items, batchError, onDrop, retry}` — this is the panel's complete behavior; no further tasks consume it directly (it's the final integration point).
 
 - [ ] **Step 1: Write `upload_client.ts`**
@@ -1559,7 +1559,7 @@ interface PresignResultItem {
     error?: string;
 }
 
-const API_BASE = '/plugins/com.acumenstrategy.picture-dump/api/v1';
+const API_BASE = '/plugins/com.lleans.file-dump/api/v1';
 
 export async function requestPresignedUrls(items: UploadItem[]): Promise<PresignResultItem[]> {
     const body: PresignRequestItem[] = items.map((item) => ({
@@ -1802,24 +1802,24 @@ export default function FileRow({item, onRetry}: Props) {
     };
 
     return (
-        <div className='picture-dump-file-row'>
-            <div className='picture-dump-file-row__name'>{item.file.name}</div>
+        <div className='file-dump-file-row'>
+            <div className='file-dump-file-row__name'>{item.file.name}</div>
             {item.status === 'uploading' && (
-                <div className='picture-dump-file-row__progress'>
+                <div className='file-dump-file-row__progress'>
                     <div
-                        className='picture-dump-file-row__progress-bar'
+                        className='file-dump-file-row__progress-bar'
                         style={{width: `${item.progress}%`}}
                     />
                 </div>
             )}
             {item.status === 'done' && item.publicUrl && (
-                <div className='picture-dump-file-row__done'>
+                <div className='file-dump-file-row__done'>
                     <a href={item.publicUrl} target='_blank' rel='noopener noreferrer'>{item.publicUrl}</a>
                     <button onClick={handleCopy}>{copied ? 'Copied!' : 'Copy link'}</button>
                 </div>
             )}
             {item.status === 'error' && (
-                <div className='picture-dump-file-row__error'>
+                <div className='file-dump-file-row__error'>
                     <span>{item.error}</span>
                     <button onClick={() => onRetry(item.id)}>{'Retry'}</button>
                 </div>
@@ -1842,10 +1842,10 @@ export default function UploadPanel() {
     const {items, batchError, onDrop, retry} = useUploads();
 
     return (
-        <div className='picture-dump-panel'>
+        <div className='file-dump-panel'>
             <FileDropzone onDrop={onDrop}/>
-            {batchError && <div className='picture-dump-panel__batch-error'>{batchError}</div>}
-            <div className='picture-dump-panel__list'>
+            {batchError && <div className='file-dump-panel__batch-error'>{batchError}</div>}
+            <div className='file-dump-panel__list'>
                 {items.map((item) => (
                     <FileRow key={item.id} item={item} onRetry={retry}/>
                 ))}
@@ -1860,7 +1860,7 @@ export default function UploadPanel() {
 Create `webapp/src/components/upload_panel/upload_panel.scss`:
 
 ```scss
-.picture-dump-dropzone {
+.file-dump-dropzone {
     border: 2px dashed var(--center-channel-color-32, rgba(63, 67, 80, 0.32));
     border-radius: 4px;
     padding: 24px;
@@ -1874,7 +1874,7 @@ Create `webapp/src/components/upload_panel/upload_panel.scss`:
     }
 }
 
-.picture-dump-file-row {
+.file-dump-file-row {
     padding: 8px 0;
     border-bottom: 1px solid var(--center-channel-color-08, rgba(63, 67, 80, 0.08));
 
@@ -2039,7 +2039,7 @@ volumes:
 # Local QA stack
 
 Brings up Mattermost, Postgres, MinIO, and APISIX (fronting MinIO) for manual
-end-to-end testing of the picture-dump plugin.
+end-to-end testing of the file-dump plugin.
 
 ## Start
 
@@ -2105,14 +2105,14 @@ git commit -m "Add local docker-compose stack (Mattermost, Postgres, MinIO, APIS
 make dist
 ```
 
-Expected: `dist/com.acumenstrategy.picture-dump-<version>.tar.gz` is created with no build errors.
+Expected: `dist/com.lleans.file-dump-<version>.tar.gz` is created with no build errors.
 
 - [ ] **Step 2: Upload and enable the plugin via System Console**
 
 1. Log into `http://localhost:8065` as the admin account created during Mattermost's first-run setup.
 2. Go to System Console → Plugins → Plugin Management.
-3. Upload `dist/com.acumenstrategy.picture-dump-<version>.tar.gz`.
-4. Go to System Console → Plugins → Picture Dump, and set:
+3. Upload `dist/com.lleans.file-dump-<version>.tar.gz`.
+4. Go to System Console → Plugins → File Dump, and set:
    - MinIO Endpoint: `localhost:9080`
    - Use HTTPS: off
    - MinIO Access Key: `minioadmin`
@@ -2123,7 +2123,7 @@ Expected: `dist/com.acumenstrategy.picture-dump-<version>.tar.gz` is created wit
 - [ ] **Step 2: Verify activation succeeded**
 
 ```bash
-docker compose -f docker/docker-compose.yml logs mattermost | grep -i "picture-dump"
+docker compose -f docker/docker-compose.yml logs mattermost | grep -i "file-dump"
 ```
 
 Expected: no error-level log lines referencing the plugin (e.g. no `"failed to create minio client"`); if `EnsurePublicReadBucket` warns, confirm the `uploads` bucket exists (from Task 9's `minio-init` service) and MinIO is reachable at `minio:9000` from inside the Mattermost container's network — note this is the plugin's *internal* Docker-network call to set the bucket policy, which is separate from the *public* APISIX endpoint used for presigning.
@@ -2132,7 +2132,7 @@ Expected: no error-level log lines referencing the plugin (e.g. no `"failed to c
 
 Confirm with the user that they can now:
 
-1. Open any channel, click the "Picture Dump" channel header button — the RHS panel should open and match Mattermost's current theme (test both light and dark theme from Settings → Display).
+1. Open any channel, click the "File Dump" channel header button — the RHS panel should open and match Mattermost's current theme (test both light and dark theme from Settings → Display).
 2. Drag and drop 1 file, then a batch of multiple files (up to 10) at once, and confirm each file's progress bar and public link appear independently as that file completes.
 3. Try a disallowed file type and an oversized file, confirming instant client-side rejection with no network delay.
 4. Open a returned public link directly in a new browser tab (unauthenticated) and confirm the file loads.

@@ -15,7 +15,7 @@ interface PresignResultItem {
     error?: string;
 }
 
-const API_BASE = '/plugins/com.acumenstrategy.picture-dump/api/v1';
+const API_BASE = '/plugins/com.lleans.file-dump/api/v1';
 
 function getCSRFFromCookie(): string {
     if (typeof document === 'undefined') {

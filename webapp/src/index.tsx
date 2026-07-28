@@ -15,14 +15,14 @@ export default class Plugin {
     public async initialize(registry: PluginRegistry, store: Store<GlobalState>) {
         const {toggleRHSPlugin} = registry.registerRightHandSidebarComponent(
             UploadPanel,
-            'Picture Dump',
+            'File Dump',
         );
 
         registry.registerChannelHeaderButtonAction(
             UploadIcon,
             () => store.dispatch(toggleRHSPlugin),
-            'Picture Dump',
-            'Upload files to Picture Dump',
+            'File Dump',
+            'Upload files to File Dump',
         );
     }
 }

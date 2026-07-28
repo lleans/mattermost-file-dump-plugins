@@ -1,4 +1,4 @@
-# Mattermost Picture Dump Plugin — Design
+# Mattermost File Dump Plugin — Design
 
 Date: 2026-07-25
 Status: Approved for planning
