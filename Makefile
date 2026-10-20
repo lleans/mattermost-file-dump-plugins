@@ -5,6 +5,8 @@ MM_DEBUG ?=
 GOPATH ?= $(shell go env GOPATH)
 GO_TEST_FLAGS ?= -race
 GO_BUILD_FLAGS ?=
+# Server platforms to build as <goos>-<goarch>. Set to one platform to produce a single-platform bundle.
+SERVER_PLATFORMS ?= linux-amd64 linux-arm64 darwin-amd64 darwin-arm64 windows-amd64
 MM_UTILITIES_DIR ?= ../mattermost-utilities
 DLV_DEBUG_PORT := 2346
 DEFAULT_GOOS := $(shell go env GOOS)
@@ -26,7 +28,8 @@ default: all
 # Verify environment, and define PLUGIN_ID, PLUGIN_VERSION, HAS_SERVER and HAS_WEBAPP as needed.
 include build/setup.mk
 
-BUNDLE_NAME ?= $(PLUGIN_ID)-$(PLUGIN_VERSION).tar.gz
+BUNDLE_SUFFIX ?=
+BUNDLE_NAME ?= $(PLUGIN_ID)-$(PLUGIN_VERSION)$(BUNDLE_SUFFIX).tar.gz
 
 # Include custom makefile, if present
 ifneq ($(wildcard build/custom.mk),)
@@ -35,8 +38,11 @@ endif
 
 ifneq ($(MM_DEBUG),)
 	GO_BUILD_GCFLAGS = -gcflags "all=-N -l"
+	GO_BUILD_LDFLAGS =
 else
 	GO_BUILD_GCFLAGS =
+	# Strip symbol and DWARF tables from release binaries.
+	GO_BUILD_LDFLAGS = -ldflags "-s -w"
 endif
 
 
@@ -219,11 +225,11 @@ ifneq ($(MM_SERVICESETTINGS_ENABLEDEVELOPER),)
 	@echo Building plugin only for $(DEFAULT_GOOS)-$(DEFAULT_GOARCH) because MM_SERVICESETTINGS_ENABLEDEVELOPER is enabled
 	cd server && env CGO_ENABLED=0 $(GO) build $(GO_BUILD_FLAGS) $(GO_BUILD_GCFLAGS) -trimpath -o dist/plugin-$(DEFAULT_GOOS)-$(DEFAULT_GOARCH);
 else
-	cd server && env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GO) build $(GO_BUILD_FLAGS) $(GO_BUILD_GCFLAGS) -trimpath -o dist/plugin-linux-amd64;
-	cd server && env CGO_ENABLED=0 GOOS=linux GOARCH=arm64 $(GO) build $(GO_BUILD_FLAGS) $(GO_BUILD_GCFLAGS) -trimpath -o dist/plugin-linux-arm64;
-	cd server && env CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 $(GO) build $(GO_BUILD_FLAGS) $(GO_BUILD_GCFLAGS) -trimpath -o dist/plugin-darwin-amd64;
-	cd server && env CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 $(GO) build $(GO_BUILD_FLAGS) $(GO_BUILD_GCFLAGS) -trimpath -o dist/plugin-darwin-arm64;
-	cd server && env CGO_ENABLED=0 GOOS=windows GOARCH=amd64 $(GO) build $(GO_BUILD_FLAGS) $(GO_BUILD_GCFLAGS) -trimpath -o dist/plugin-windows-amd64.exe;
+	@for platform in $(SERVER_PLATFORMS); do \
+		os=$${platform%-*}; arch=$${platform#*-}; ext=; \
+		if [ "$$os" = windows ]; then ext=.exe; fi; \
+		(cd server && env CGO_ENABLED=0 GOOS=$$os GOARCH=$$arch $(GO) build $(GO_BUILD_FLAGS) $(GO_BUILD_GCFLAGS) $(GO_BUILD_LDFLAGS) -trimpath -o dist/plugin-$$os-$$arch$$ext) || exit 1; \
+	done
 endif
 endif
 

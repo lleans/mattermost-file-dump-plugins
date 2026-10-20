@@ -8,7 +8,10 @@ permissions:
   contents: write
 
 jobs:
-  build-and-release:
+  bundle:
+    strategy:
+      matrix:
+        platform: [linux-amd64, linux-arm64, darwin-amd64, darwin-arm64, windows-amd64]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -28,8 +31,24 @@ jobs:
           cache: npm
           cache-dependency-path: webapp/package-lock.json
 
-      - name: Build plugin bundle
-        run: make dist
+      - name: Build ${{ matrix.platform }} bundle
+        run: make dist SERVER_PLATFORMS=${{ matrix.platform }} BUNDLE_SUFFIX=-${{ matrix.platform }}
+
+      - name: Upload bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-${{ matrix.platform }}
+          path: dist/*.tar.gz
+
+  release:
+    needs: bundle
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download bundles
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
 
       - name: Publish GitHub release
         uses: softprops/action-gh-release@v2
